@@ -1,0 +1,18 @@
+name: mlenv2019
+
+dependencies:
+  - python=3.7
+  - numpy
+  - matplotlib
+  - pandas
+  - bokeh
+  - sklearn
+  - numpy
+  - pandas
+  - os
+  - matplotlib
+  - latex
+  - scipy
+  - statsmodels
+  - keras
+  - tensorflow
