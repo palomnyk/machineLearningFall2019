@@ -1,3 +1,5 @@
+#adapted from https://github.com/binder-project/example-conda-environment
+#conda env create --file MLEnv2019.yml
 name: mlenv2019
 
 dependencies:
@@ -6,12 +8,10 @@ dependencies:
   - matplotlib
   - pandas
   - bokeh
-  - sklearn
+  - scikit-learn
   - numpy
   - pandas
-  - os
   - matplotlib
-  - latex
   - scipy
   - statsmodels
   - keras
