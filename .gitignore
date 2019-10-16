@@ -106,3 +106,4 @@ venv.bak/
 # user added
 .DS_Store
 .idea
+.vscode
