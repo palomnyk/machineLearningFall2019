@@ -82,10 +82,19 @@ class d_lm:
         y_vals = self.beta_0_hat + self.beta_1_hat * x_vals
         return y_vals
 
-    def test_model(self, test_x, test_y):
-        pass
+    def test_model_r_squared(self, test_x, test_y):
+        pred_y_vals = self.beta_0_hat + self.beta_1_hat * test_x
+        pred_y_hat = np.mean(pred_y_vals)
+        test_y_hat = np.mean(test_y)
+        # print(np.sqrt(np.sum(pred_y_vals-pred_y_hat)**2))
+        r = np.sum( (pred_y_vals-pred_y_hat) * (test_y - test_y_hat) ) / \
+          (np.sqrt(np.sum(pred_y_vals-pred_y_hat)**2) * (np.sqrt(np.sum(test_y - test_y_hat)**2)))
+        r_sqrd = r**2
+        
+        return r_sqrd
 
     def plot_model_w_data(self):
+
         pass
 
 diabetes = datasets.load_diabetes()
@@ -97,19 +106,19 @@ testing_x = np.asarray(x[random_samples])
 training_x = np.asarray([x[i] for i in range(0, n_samples) if i not in random_samples])
 testing_y = np.asarray(y[random_samples])
 training_y = np.asarray([y[i] for i in range(0, n_samples) if i not in random_samples])
-print(testing_y[0])
-print(training_y[0])
-print(y[0])
-print(len(testing_y))
-print(len(training_y))
-print(len(testing_x))
-print(len(training_x))
+# print(testing_y[0])
+# print(training_y[0])
+# print(y[0])
+# print(len(testing_y))
+# print(len(training_y))
+# print(len(testing_x))
+# print(len(training_x))
 
-print(training_y[1:10])
-print(training_x[1:10])
+# print(training_y[1:10])
+# print(training_x[1:10])
 my_lm = d_lm(training_x, training_y)
 
-print(my_lm.predict_y_from_model(testing_x))
+print(my_lm.test_model_r_squared(testing_x , testing_y))
 
 
 
