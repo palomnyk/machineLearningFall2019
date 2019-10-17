@@ -111,7 +111,7 @@ class d_lm:
         ax.plot(self.x, self.y_hat, color='blue', label='model from training data', linewidth=line_width_1)
         ax.set_xlabel('x')
         ax.set_ylabel('y')
-        ax.set_title("Linear regression of diabetes data")
+        ax.set_title("Linear regression of diabetes data with d_lm class")
         ax.legend(loc='lower right', fontsize=9)
         fig.show()
         
@@ -138,7 +138,17 @@ my_lm.test_model_RMSE(testing_x , testing_y)
 # run professional lm model
 # --------------------------------------------------------------------------
 
+training_x = training_x.reshape((len(training_x), 1))
+testing_x = testing_x.reshape((len(testing_x), 1))
+skl_lm = linear_model.LinearRegression().fit(training_x, training_y)
 
-
-
-
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+ax.scatter(training_x, training_y, label=f'training data', color='yellow', marker=marker_1, linewidth=line_width_1)
+ax.scatter(testing_x, testing_y, label=f'true vals of testing data', color='red', marker=marker_1, linewidth=line_width_1)
+ax.scatter(testing_x, skl_lm.predict(testing_x), color='green', label='predicted vals of testing data', linewidth=line_width_1)
+ax.plot(training_x, skl_lm.predict(training_x), color='blue', label='model from training data', linewidth=line_width_1)
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_title("Linear regression of diabetes data with sklearn lm")
+ax.legend(loc='lower right', fontsize=9)
