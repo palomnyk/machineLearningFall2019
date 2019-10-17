@@ -15,7 +15,6 @@ import os, sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import random
 
 class d_lm:
     def __init__(self, x, y, confidence = 0.95):
@@ -79,35 +78,40 @@ class d_lm:
         self.y_hat_CI_lower_bound = self.y_hat - self.z * self.y_hat_sd
         self.y_hat_CI_upper_bound = self.y_hat + self.z * self.y_hat_sd
 
-    def predict_y_from_model(x_val):
-      pass
+    def predict_y_from_model(self, x_vals):
+        y_vals = self.beta_0_hat + self.beta_1_hat * x_vals
+        return y_vals
 
-    def test_model(test_x, test_y):
-      pass
+    def test_model(self, test_x, test_y):
+        pass
 
     def plot_model_w_data(self):
-      pass
+        pass
 
 diabetes = datasets.load_diabetes()
 x = diabetes.data[:,2]
 y = diabetes.target
 n_samples = len(diabetes.target)
-random_samples = [random.randint(0, n_samples) for iter in range(20)]
-# testing_x
-# training_x
-testing_y = diabetes.target[random_samples]
-training_y = [y[i] for i in range(0, n_samples) if i not in random_samples]
+random_samples = np.random.randint(low = 0, high = n_samples, size = 20)
+testing_x = np.asarray(x[random_samples])
+training_x = np.asarray([x[i] for i in range(0, n_samples) if i not in random_samples])
+testing_y = np.asarray(y[random_samples])
+training_y = np.asarray([y[i] for i in range(0, n_samples) if i not in random_samples])
+print(testing_y[0])
+print(training_y[0])
+print(y[0])
 print(len(testing_y))
 print(len(training_y))
+print(len(testing_x))
+print(len(training_x))
+
+print(training_y[1:10])
+print(training_x[1:10])
+my_lm = d_lm(training_x, training_y)
+
+print(my_lm.predict_y_from_model(testing_x))
 
 
-
-print(len(diabetes.data[:,2]))
-print(len(diabetes.target))
-
-tst = d_lm(diabetes.data[:,2], diabetes.target)
-
-print(tst.S_xx)
 
 from mpl_toolkits.mplot3d import Axes3D
 
