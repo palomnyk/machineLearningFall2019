@@ -7,6 +7,10 @@
 # from sklearn import linear model
 # This diabetes dataset contains 10 features/variables. Select diabetes.data[:,2] as x for linear regression. The dependent variable y is diabetes.target. Split x and y into training and testing sets by randomly selecting 20 points for testing and the remaining for training. Plot the testing x vs testing y, and the testing x vs predicted y in the same plot.
 
+
+# --------------------------------------------------------------------------
+# Import external libraries
+# --------------------------------------------------------------------------
 import numpy as np
 import scipy.stats as stats
 from sklearn import linear_model
@@ -94,60 +98,47 @@ class d_lm:
         self.y_hat_CI_lower_bound = self.y_hat - self.z * self.y_hat_sd
         self.y_hat_CI_upper_bound = self.y_hat + self.z * self.y_hat_sd
 
-    def predict_y_from_model(self, x_vals):
-        y_vals = self.beta_0_hat + self.beta_1_hat * x_vals
-        return y_vals
-
-    def test_model_r_squared(self, test_x, test_y):
-        print(test_x)
-        pred_y = self.beta_0_hat + self.beta_1_hat * test_x
-        print(pred_y)
-        print(test_y)
-        pred_y_hat = np.mean(pred_y)
-        test_y_hat = np.mean(test_y)
-        # print(np.sqrt(np.sum(pred_y-pred_y_hat)**2))
-        # r = np.sum( (pred_y-pred_y_hat) * (test_y - test_y_hat) ) / \
-        #   (np.sqrt(np.sum(pred_y-pred_y_hat)**2) * (np.sqrt(np.sum(test_y - test_y_hat)**2)))
-        # r_sqrd = r**2
+    def test_model_RMSE(self, test_x, test_y):
+        pred_y_test = self.beta_0_hat + self.beta_1_hat * test_x
+        pred_y_train = self.beta_0_hat + self.beta_1_hat * self.x
+        train_rmse = sum(((self.y - pred_y_train)**2)/len(self.y))**(1/2)
+        test_rmse = sum(((test_y - pred_y_test)**2)/len(test_y))**(1/2)
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
-        ax.scatter(self.x, self.y, label='training data', color='yellow', marker=marker_1, linewidth=line_width_1)
-        ax.scatter(test_x, test_y, label='testing data', color='red', marker=marker_1, linewidth=line_width_1)
-        #ax.plot(x, y_theoretical, color='green', label='theoretical', linewidth=line_width_1)
-        ax.plot(self.x, self.y_hat, color='blue', label='Model from Training', linewidth=line_width_1)
-        # ax.plot(test_x, np.ones(n)*y_bar, color='black', linestyle=':', linewidth=line_width_1)
-        ax.plot([x_bar, x_bar], [np.min(y), np.max(y)], color='black', linestyle=':', linewidth=line_width_1)
+        ax.scatter(self.x, self.y, label=f'training data, RMSE:{round(train_rmse,1)}', color='yellow', marker=marker_1, linewidth=line_width_1)
+        ax.scatter(test_x, test_y, label=f'true vals of testing data, RMSE:{round(test_rmse,1)}', color='red', marker=marker_1, linewidth=line_width_1)
+        ax.scatter(test_x, pred_y_test, color='green', label='predicted vals of testing data', linewidth=line_width_1)
+        ax.plot(self.x, self.y_hat, color='blue', label='model from training data', linewidth=line_width_1)
         ax.set_xlabel('x')
         ax.set_ylabel('y')
         ax.set_title("Linear regression of diabetes data")
         ax.legend(loc='lower right', fontsize=9)
         fig.show()
-        # return r_sqrd
-
-    def plot_model_w_data(self):
-
-        pass
-
+        
+# --------------------------------------------------------------------------
+# create training and testingdatasets
+# --------------------------------------------------------------------------
 diabetes = datasets.load_diabetes()
 x = diabetes.data[:,2]
 y = diabetes.target
 n_samples = len(diabetes.target)
 random_samples = np.random.randint(low = 0, high = n_samples, size = 20)
-print(f'random samples: {random_samples}')
 testing_x = np.asarray(x[random_samples])
 training_x = np.asarray([x[i] for i in range(0, n_samples) if i not in random_samples])
 testing_y = np.asarray(y[random_samples])
 training_y = np.asarray([y[i] for i in range(0, n_samples) if i not in random_samples])
-# print(testing_y[0])
-# print(training_y[0])
-# print(y[0])
-# print(len(testing_y))
-# print(len(training_y))
-# print(len(testing_x))
-# print(len(training_x))
 
-# print(training_y[1:10])
-# print(training_x[1:10])
+# --------------------------------------------------------------------------
+# run homemade lm model
+# --------------------------------------------------------------------------
 my_lm = d_lm(training_x, training_y)
+my_lm.test_model_RMSE(testing_x , testing_y)
 
-my_lm.test_model_r_squared(testing_x , testing_y)
+# --------------------------------------------------------------------------
+# run professional lm model
+# --------------------------------------------------------------------------
+
+
+
+
+
