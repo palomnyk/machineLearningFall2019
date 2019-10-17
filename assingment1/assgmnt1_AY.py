@@ -111,16 +111,16 @@ class d_lm:
         # r_sqrd = r**2
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
-        ax.scatter(self.x, self.y, color='red', marker=marker_1, linewidth=line_width_1)
-        ax.scatter(test_x, test_y, color='gray', marker=marker_1, linewidth=line_width_1)
+        ax.scatter(self.x, self.y, label='training data', color='yellow', marker=marker_1, linewidth=line_width_1)
+        ax.scatter(test_x, test_y, label='testing data', color='red', marker=marker_1, linewidth=line_width_1)
         #ax.plot(x, y_theoretical, color='green', label='theoretical', linewidth=line_width_1)
         ax.plot(self.x, self.y_hat, color='blue', label='Model from Training', linewidth=line_width_1)
         # ax.plot(test_x, np.ones(n)*y_bar, color='black', linestyle=':', linewidth=line_width_1)
-        # ax.plot([x_bar, x_bar], [np.min(y), np.max(y)], color='black', linestyle=':', linewidth=line_width_1)
+        ax.plot([x_bar, x_bar], [np.min(y), np.max(y)], color='black', linestyle=':', linewidth=line_width_1)
         ax.set_xlabel('x')
         ax.set_ylabel('y')
-        ax.set_title("Linear regression of Test data")
-        # ax.legend(loc='lower right', fontsize=9)
+        ax.set_title("Linear regression of diabetes data")
+        ax.legend(loc='lower right', fontsize=9)
         fig.show()
         # return r_sqrd
 
@@ -150,5 +150,4 @@ training_y = np.asarray([y[i] for i in range(0, n_samples) if i not in random_sa
 # print(training_x[1:10])
 my_lm = d_lm(training_x, training_y)
 
-print(my_lm.test_model_r_squared(testing_x , testing_y))
 my_lm.test_model_r_squared(testing_x , testing_y)
