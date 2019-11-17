@@ -4,31 +4,48 @@
 # 2. (50 points total distributed as below) Apply your code from question 2 to the iris virginica and virsicolor flowers. Specifically, randomly select 99 of these flowers for training your logistic model and use the remaining one flower for testing. You only need to do training once and testing once with your specific choice of the training flowers and testing flowers. That is to say, you don’t need to do the leave-one-out cross validation 100 times.
 # (a) (15 points) After your training, plot the total cost J vs iterations for your 99 training flowers for four scenarios.
 # (b) (20 points) Predict the flower type of your testing flower for each of the four scenarios.
-# (c) (15 points) Apply sklearn.linear model.LogisticRegression to your spe- cific choice of training flowers. With the intercept and coefficients produced by sklearn, calculate the total final cost J for your 99 flowers.
+# (c) (15 points) Apply sklearn.linear model.LogisticRegression to your specific choice of training flowers. With the intercept and coefficients produced by sklearn, calculate the total final cost J for your 99 flowers.
 
 # --------------------------------------------------------------------------
 # Import external libraries
 # --------------------------------------------------------------------------
-import numpy as np
-import scipy.stats as stats
-from sklearn import linear_model
-from sklearn import datasets
+# for my code
 import os, sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+# for comparison
+import scipy.stats as stats
+from sklearn import linear_model
+from sklearn import datasets
+# for dataset
+from sklearn.datasets import load_iris
 
 def logit(p):
     return np.log(p/(1-p))
 
 print(logit(0.5))
 
+
+
+# --------------------------------------------------------------------------
+# set up log reg class
+# --------------------------------------------------------------------------
 class my_logistic_reg:
-    def __init__(self, x, y, confidence = 0.95):
-        self.confidence = confidence
+    def __init__(self, x, y, lr = 0.01, n_iter = 1000):
         self.x = x
         self.y = y
+
+
+
+
+# --------------------------------------------------------------------------
+# main method
+# --------------------------------------------------------------------------
+iris = load_iris()
+df = pd.DataFrame(iris['data'], columns=iris['feature_names'])
+print(df.head())
+
 
 # --------------------------------------------------------------------------
 # set up plotting parameters
