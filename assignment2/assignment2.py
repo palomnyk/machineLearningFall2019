@@ -22,9 +22,13 @@ import matplotlib.pyplot as plt
 def logit(p):
     return np.log(p/(1-p))
 
-def probit()
-
 print(logit(0.5))
+
+class my_logistic_reg:
+    def __init__(self, x, y, confidence = 0.95):
+        self.confidence = confidence
+        self.x = x
+        self.y = y
 
 # --------------------------------------------------------------------------
 # set up plotting parameters
