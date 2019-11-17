@@ -97,3 +97,8 @@ def d_lm(x, y, confidence=0.95):
     lm_result['y_hat_CI_upper_bound'] = y_hat_CI_upper_bound
 
     return lm_result
+
+from sklearn import datasets
+diabetes = datasets.load_diabetes()
+my_lm = d_lm(diabetes.data[:,2], diabetes.target)
+print(my_lm['F_statistic'])
