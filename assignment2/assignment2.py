@@ -26,8 +26,6 @@ def logit(p):
 
 print(logit(0.5))
 
-
-
 # --------------------------------------------------------------------------
 # set up log reg class
 # --------------------------------------------------------------------------
@@ -35,6 +33,19 @@ class my_logistic_reg:
     def __init__(self, x, y, lr = 0.01, n_iter = 1000):
         self.x = x
         self.y = y
+        self.lr = lr
+        self.n_iter = n_iter
+
+    
+
+    def log_model:
+        pass
+
+    def gradient_descent:
+        pass
+
+    def test:
+        pass
 
 
 
