@@ -21,6 +21,18 @@ from sklearn import datasets
 # for dataset
 from sklearn.datasets import load_iris
 
+# --------------------------------------------------------------------------
+# set up plotting parameters
+# --------------------------------------------------------------------------
+line_width_1 = 2
+line_width_2 = 2
+marker_1 = '.' # point
+marker_2 = 'o' # circle
+marker_size = 12
+line_style_1 = ':' # dotted line
+line_style_2 = '-' # solid line
+
+
 def logit(p):
     return np.log(p/(1-p))
 
@@ -48,22 +60,22 @@ class my_logistic_reg:
         self.bias = 0
 
         #stop the grad descent ∆J = 0.00001
-        # dj = 1
-        # gd_iter = 0
+        dj = 1
+        gd_iter = 0
 
-        # # gradient descent
-        # while dj <= self.dj_stop or gd_iter >= self.n_iter:
-        #     # approximate y with linear combination of weights and x, plus bias
-        #     linear_model = np.dot(X, self.weights) + self.bias
-        #     # apply sigmoid function
-        #     y_predicted = self.sigmoid(linear_model)
+        # gradient descent
+        while dj <= self.dj_stop or gd_iter >= self.n_iter:
+            # approximate y with linear combination of weights and x, plus bias
+            linear_model = np.dot(X, self.weights) + self.bias
+            # apply sigmoid function
+            y_predicted = self.sigmoid(linear_model)
 
-        #     # compute gradients
-        #     dw = (1 / 2 * n_samples) * np.dot(X.T, (y_predicted - y))
-        #     db = (1 / 2 * n_samples) * np.sum(y_predicted - y)
-        #     # update parameters
-        #     self.weights -= self.lr * dw
-        #     self.bias -= self.lr * db
+            # compute gradients
+            dw = (1 / 2 * n_samples) * np.dot(X.T, (y_predicted - y))
+            db = (1 / 2 * n_samples) * np.sum(y_predicted - y)
+            # update parameters
+            self.weights -= self.lr * dw
+            self.bias -= self.lr * db
         
     def gradient_descent(self):
         pass
@@ -78,20 +90,9 @@ class my_logistic_reg:
 # main method
 # --------------------------------------------------------------------------
 iris = load_iris()
-df = pd.DataFrame(iris['data'], columns=iris['feature_names'])
-print(df.head())
-
-
-# --------------------------------------------------------------------------
-# set up plotting parameters
-# --------------------------------------------------------------------------
-# line_width_1 = 2
-# line_width_2 = 2
-# marker_1 = '.' # point
-# marker_2 = 'o' # circle
-# marker_size = 12
-# line_style_1 = ':' # dotted line
-# line_style_2 = '-' # solid line
+df = pd.DataFrame(iris.data, columns = iris['feature_names'])
+df['species'] = pd.Categorical.from_codes(iris.target, iris.target_names)
+# df.to_csv('testing.tsv', sep='\t')
 
 # # --------------------------------------------------------------------------
 # # set up lm class
