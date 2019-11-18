@@ -24,6 +24,9 @@ from sklearn.datasets import load_iris
 def logit(p):
     return np.log(p/(1-p))
 
+def sigmoid(line):
+    return 1/(1-np.exp(line))
+
 print(logit(0.5))
 
 # --------------------------------------------------------------------------
@@ -36,7 +39,7 @@ class my_logistic_reg:
         self.lr = lr
         self.n_iter = n_iter
 
-    
+
 
     def log_model:
         pass
