@@ -25,29 +25,50 @@ def logit(p):
     return np.log(p/(1-p))
 
 def sigmoid(line):
-    return 1/(1-np.exp(line))
+    return 1/(1 + np.exp(-line))
 
 print(logit(0.5))
+print(sigmoid(0.000001))
 
 # --------------------------------------------------------------------------
 # set up log reg class
 # --------------------------------------------------------------------------
 class my_logistic_reg:
-    def __init__(self, x, y, lr = 0.01, n_iter = 1000):
-        self.x = x
-        self.y = y
+    def __init__(self, my_data, lr = 0.01, n_iter = 1000, dj_stop = 0.00001):
+        self.my_data = my_data
         self.lr = lr
         self.n_iter = n_iter
+        self.dj_stop = dj_stop
 
+    def log_model(self):
+        n_samples, n_features = my_data.shape
 
+        # init parameters
+        self.weights = np.zeros(n_features)
+        self.bias = 0
 
-    def log_model:
+        #stop the grad descent ∆J = 0.00001
+        # dj = 1
+        # gd_iter = 0
+
+        # # gradient descent
+        # while dj <= self.dj_stop or gd_iter >= self.n_iter:
+        #     # approximate y with linear combination of weights and x, plus bias
+        #     linear_model = np.dot(X, self.weights) + self.bias
+        #     # apply sigmoid function
+        #     y_predicted = self.sigmoid(linear_model)
+
+        #     # compute gradients
+        #     dw = (1 / 2 * n_samples) * np.dot(X.T, (y_predicted - y))
+        #     db = (1 / 2 * n_samples) * np.sum(y_predicted - y)
+        #     # update parameters
+        #     self.weights -= self.lr * dw
+        #     self.bias -= self.lr * db
+        
+    def gradient_descent(self):
         pass
 
-    def gradient_descent:
-        pass
-
-    def test:
+    def test(self):
         pass
 
 
