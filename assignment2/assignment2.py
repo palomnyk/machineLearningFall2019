@@ -53,7 +53,7 @@ class my_logistic_reg:
         self.dj_stop = dj_stop
 
     def log_model(self):
-        n_samples, n_features = my_data.shape
+        n_samples, n_features = self.my_data.shape
 
         # init parameters
         self.weights = np.zeros(n_features)
@@ -71,8 +71,8 @@ class my_logistic_reg:
             y_predicted = self.sigmoid(linear_model)
 
             # compute gradients
-            dw = (1 / 2 * n_samples) * np.dot(X.T, (y_predicted - y))
-            db = (1 / 2 * n_samples) * np.sum(y_predicted - y)
+            dw = (1 / n_samples) * np.dot(X.T, (y_predicted - y))
+            db = (1 / n_samples) * np.sum(y_predicted - y)
             # update parameters
             self.weights -= self.lr * dw
             self.bias -= self.lr * db
@@ -93,6 +93,10 @@ iris = load_iris()
 df = pd.DataFrame(iris.data, columns = iris['feature_names'])
 df['species'] = pd.Categorical.from_codes(iris.target, iris.target_names)
 # df.to_csv('testing.tsv', sep='\t')
+
+df = df[df.species != "setosa"]
+print(df.head)
+
 
 # # --------------------------------------------------------------------------
 # # set up lm class
