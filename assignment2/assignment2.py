@@ -56,30 +56,33 @@ class my_logistic_reg:
         n_samples, n_features = self.my_data.shape
 
         # init parameters
-        self.weights = np.zeros(n_features)
-        self.bias = 0
+        self.slope = np.zeros(n_features)
+        self.y_intercept = 0
 
         #stop the grad descent ∆J = 0.00001
         dj = 1
         gd_iter = 0
 
         # gradient descent
-        while dj <= self.dj_stop or gd_iter >= self.n_iter:
-            # approximate y with linear combination of weights and x, plus bias
-            linear_model = np.dot(X, self.weights) + self.bias
+        while dj >= self.dj_stop or gd_iter >= self.n_iter:
+            # approximate y with linear combination of slope and x, plus y_intercept
+            linear_model = np.dot(my_data, self.slope) + self.y_intercept
             # apply sigmoid function
-            y_predicted = self.sigmoid(linear_model)
+            y_predicted = sigmoid(linear_model)
 
             # compute gradients
-            dw = (1 / n_samples) * np.dot(X.T, (y_predicted - y))
-            db = (1 / n_samples) * np.sum(y_predicted - y)
+            d_slope = (1 / n_samples) * np.dot(data.T, (y_predicted - y))
+            d_intercept = (1 / n_samples) * np.sum(y_predicted - y)
             # update parameters
-            self.weights -= self.lr * dw
-            self.bias -= self.lr * db
+            self.slope -= self.lr * d_slope
+            self.y_intercept -= self.lr * d_intercept
+            gd+=1
+            dj = d_slope
+        print('done with while')
+        print(dj)
+        print(self.slope = np.zeros(n_features))
+        print(self.y_intercept = 0)
         
-    def gradient_descent(self):
-        pass
-
     def test(self):
         pass
 
