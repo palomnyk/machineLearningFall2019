@@ -89,16 +89,42 @@ class my_logistic_reg:
 
 
 
+
 # --------------------------------------------------------------------------
-# main method
+# create training and testingdatasets
 # --------------------------------------------------------------------------
+# diabetes = datasets.load_diabetes()
+# x = diabetes.data[:,2]
+# y = diabetes.target
+# n_samples = len(diabetes.target)
+# random_samples = np.random.randint(low = 0, high = n_samples, size = 20)
+# testing_x = np.asarray(x[random_samples])
+# training_x = np.asarray([x[i] for i in range(0, n_samples) if i not in random_samples])
+# testing_y = np.asarray(y[random_samples])
+# training_y = np.asarray([y[i] for i in range(0, n_samples) if i not in random_samples])
+
 iris = load_iris()
 df = pd.DataFrame(iris.data, columns = iris['feature_names'])
 df['species'] = pd.Categorical.from_codes(iris.target, iris.target_names)
 # df.to_csv('testing.tsv', sep='\t')
-
 df = df[df.species != "setosa"]
+
+random_num = np.random.randint(low = 0, high = df.index - 1, size = df.index)
+
+training_data = df[random_num]
+# testing_data = df[!random_num]
+
+print(training_data.head)
+
 print(df.head)
+
+
+# --------------------------------------------------------------------------
+# main method
+# --------------------------------------------------------------------------
+
+
+
 
 
 # # --------------------------------------------------------------------------
@@ -185,18 +211,6 @@ print(df.head)
 #         ax.legend(loc='lower right', fontsize=9)
 #         fig.show()
         
-# # --------------------------------------------------------------------------
-# # create training and testingdatasets
-# # --------------------------------------------------------------------------
-# diabetes = datasets.load_diabetes()
-# x = diabetes.data[:,2]
-# y = diabetes.target
-# n_samples = len(diabetes.target)
-# random_samples = np.random.randint(low = 0, high = n_samples, size = 20)
-# testing_x = np.asarray(x[random_samples])
-# training_x = np.asarray([x[i] for i in range(0, n_samples) if i not in random_samples])
-# testing_y = np.asarray(y[random_samples])
-# training_y = np.asarray([y[i] for i in range(0, n_samples) if i not in random_samples])
 
 # # --------------------------------------------------------------------------
 # # run homemade lm model
