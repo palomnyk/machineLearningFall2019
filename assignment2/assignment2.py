@@ -135,7 +135,9 @@ print(f'test_y.shape: {test_y.shape}')
 # --------------------------------------------------------------------------
 skl_log = linear_model.LogisticRegression(solver="lbfgs")
 skl_log.fit(X=df_x, y=df_y)
-# sk_log.predict(testing_x)
+skl_pred = skl_log.predict(test_x)
+print(f'sklearn log rediction: {skl_pred}')
+print(f'Correct answer: {test_y}, {test_y == skl_pred}')
 
 
 # fig = plt.figure()
