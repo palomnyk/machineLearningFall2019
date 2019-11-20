@@ -94,16 +94,33 @@ df = pd.DataFrame(iris.data, columns = iris['feature_names'])
 df['species'] = pd.Categorical.from_codes(iris.target, iris.target_names)
 df = df[df.species != "setosa"]
 df = df.reset_index(drop = True)
+df['species'] = df['species'].map({'versicolor': 1, 'virginica': 0})
 df.to_csv('testing.tsv', sep='\t')
 #print(df.shape[0])
-testing_index = np.random.randint(low = 0, high = df.shape[0] - 1, size = 1 )[0]
-#print(testing_index)
-training_data = df.drop(testing_index, axis = 0)
-testing_data = df.iloc[testing_index]
 
-#print(training_data.head)
+df_x = df.iloc[:,list(range(df.shape[1]-1))]
+print(f'df_x.shape: {df_x.shape}')
+df_y = df.iloc[:,df.shape[1]-1]
+print(f'df_y.shape: {df_y.shape}')
 
-# print(df.head)
+
+
+# training_data = df.drop(testing_index, axis = 0)
+# print(f'training_data.shape: {training_data.shape}')
+test_index = np.random.randint(low = 0, high = df.shape[0] - 1, size = 1 )[0]
+print(test_index)
+train_index = filter(lambda a: a != test_index, range(df.shape[0]))
+print(train_index)
+
+train_x = df_x.drop(test_index, axis = 0)
+print(f'train_x.shape: {train_x.shape}')
+train_y = df_y.drop(test_index, axis = 0)
+print(f'train_y.shape: {train_y.shape}')
+test_x = df_x.drop(train_index, axis = 0)
+print(f'test_x.shape: {test_x.shape}')
+test_y = df_y.drop(filter(lambda a: a != test_index, range(df.shape[0])), axis = 0)
+print(f'test_y.shape: {test_y.shape}')
+
 
 
 # --------------------------------------------------------------------------
@@ -114,12 +131,12 @@ testing_data = df.iloc[testing_index]
 
 
 # --------------------------------------------------------------------------
-# run professional lm model
+# run professional log reg model
 # --------------------------------------------------------------------------
+skl_log = linear_model.LogisticRegression(solver="lbfgs")
+skl_log.fit(X=df_x, y=df_y)
+# sk_log.predict(testing_x)
 
-# training_x = training_x.reshape((len(training_x), 1))
-# testing_x = testing_x.reshape((len(testing_x), 1))
-# skl_lm = linear_model.LinearRegression().fit(training_x, training_y)
 
 # fig = plt.figure()
 # ax = fig.add_subplot(1, 1, 1)
