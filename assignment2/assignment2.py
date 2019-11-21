@@ -14,6 +14,7 @@ import os, sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from itertools import chain
 # for comparison
 import scipy.stats as stats
 from sklearn import linear_model
@@ -46,19 +47,19 @@ print(sigmoid(0.000001))
 # set up log reg class
 # --------------------------------------------------------------------------
 class my_logistic_reg:
-    def __init__(self, my_data, lr = 0.01, n_iter = 1000, dj_stop = 0.00001):
-        self.my_data = my_data
+    def __init__(self, my_x, my_y, lr = 0.001, n_iter = 1000, dj_stop = 0.00001):
+        self.my_x = my_x
+        self.my_y = my_y
         self.lr = lr
         self.n_iter = n_iter
         self.dj_stop = dj_stop
 
     def log_model(self):
-        n_samples, n_features = self.my_data.shape
+        n_samples, n_features = self.my_x.shape
 
         # init parameters
         self.slope = np.zeros(n_features)
         self.y_intercept = 0
-
         #stop the grad descent ∆J = 0.00001
         dj = 1
         gd_iter = 0
@@ -66,17 +67,17 @@ class my_logistic_reg:
         # gradient descent
         while dj >= self.dj_stop or gd_iter >= self.n_iter:
             # approximate y with linear combination of slope and x, plus y_intercept
-            linear_model = np.dot(my_data, self.slope) + self.y_intercept
+            linear_model = np.dot(self.my_x, self.slope) + self.y_intercept
             # apply sigmoid function
             y_predicted = sigmoid(linear_model)
 
             # compute gradients
-            d_slope = (1 / n_samples) * np.dot(data.T, (y_predicted - y))
-            d_intercept = (1 / n_samples) * np.sum(y_predicted - y)
+            d_slope = (1 / n_samples) * np.dot(self.my_x.T, (y_predicted - self.my_y))
+            d_intercept = (1 / n_samples) * np.sum(y_predicted - self.my_y)
             # update parameters
             self.slope -= self.lr * d_slope
             self.y_intercept -= self.lr * d_intercept
-            gd+=1
+            gd_iter+=1
             dj = d_slope
         print('done with while')
         print(dj)
@@ -85,7 +86,6 @@ class my_logistic_reg:
         
     def test(self):
         pass
-
 # --------------------------------------------------------------------------
 # create training and testingdatasets
 # --------------------------------------------------------------------------
@@ -103,10 +103,6 @@ print(f'df_x.shape: {df_x.shape}')
 df_y = df.iloc[:,df.shape[1]-1]
 print(f'df_y.shape: {df_y.shape}')
 
-
-
-# training_data = df.drop(testing_index, axis = 0)
-# print(f'training_data.shape: {training_data.shape}')
 test_index = np.random.randint(low = 0, high = df.shape[0] - 1, size = 1 )[0]
 print(test_index)
 train_index = filter(lambda a: a != test_index, range(df.shape[0]))
@@ -127,27 +123,31 @@ print(f'test_y.shape: {test_y.shape}')
 # main method
 # --------------------------------------------------------------------------
 
-
+#my_lr = my_logistic_reg(train_x, train_y)
+#my_lr.log_model()
+ 
 
 
 # --------------------------------------------------------------------------
 # run professional log reg model
 # --------------------------------------------------------------------------
 skl_log = linear_model.LogisticRegression(solver="lbfgs")
-skl_log.fit(X=df_x, y=df_y)
+skl_log.fit(X=train_x, y=train_y)
 skl_pred = skl_log.predict(test_x)
 print(f'sklearn log rediction: {skl_pred}')
 print(f'Correct answer: {test_y}, {test_y == skl_pred}')
+print(skl_log.coef_)
+print(skl_log.intercept_)
 
+def cost_j(X,y, coef, intercept):
+    total_cost = 0
+    for row in range(X.shape[0]):
+        term = np.log(sigmoid(-(np.dot( skl_log.coef_[0].T, np.array(X.iloc[row,])))))
+        total_cost += y.iloc[row,] * term + (1-y.iloc[row,] * (term))
+    return - total_cost/X.shape[0]
+        
+my_row = np.array(train_x.iloc[1,])
 
-# fig = plt.figure()
-# ax = fig.add_subplot(1, 1, 1)
-# ax.scatter(training_x, training_y, label=f'training data', color='yellow', marker=marker_1, linewidth=line_width_1)
-# ax.scatter(testing_x, testing_y, label=f'true vals of testing data', color='red', marker=marker_1, linewidth=line_width_1)
-# ax.scatter(testing_x, skl_lm.predict(testing_x), color='green', label='predicted vals of testing data', linewidth=line_width_1)
-# ax.plot(training_x, skl_lm.predict(training_x), color='blue', label='model from training data', linewidth=line_width_1)
-# ax.set_xlabel('x')
-# ax.set_ylabel('y')
-# ax.set_title("Linear regression of diabetes data with sklearn lm")
-# ax.legend(loc='lower right', fontsize=9)
-# fig.show()
+skl_log_cost = cost_j(train_x, train_y, skl_log.coef_, skl_log.intercept_)
+print(f'2(c) the total final cost J: {skl_log_cost}')
+   
