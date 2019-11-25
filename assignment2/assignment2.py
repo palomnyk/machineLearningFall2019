@@ -23,63 +23,64 @@ from sklearn import datasets
 from sklearn.datasets import load_iris
 
 # --------------------------------------------------------------------------
-# set up plotting parameters
+# Some useful functions
 # --------------------------------------------------------------------------
-line_width_1 = 2
-line_width_2 = 2
-marker_1 = '.' # point
-marker_2 = 'o' # circle
-marker_size = 12
-line_style_1 = ':' # dotted line
-line_style_2 = '-' # solid line
-
-
 def logit(p):
     return np.log(p/(1-p))
 
 def sigmoid(line):
     return 1/(1 + np.exp(-line))
 
-print(logit(0.5))
-print(sigmoid(0.000001))
-
+def cost_j(X,y, coef, intercept):
+    total_cost = 0
+    for row in range(X.shape[0]):
+        term = np.log(sigmoid(-(np.dot( skl_log.coef_[0].T, np.array(X.iloc[row,])))))
+        total_cost += y.iloc[row,] * term + (1-y.iloc[row,] * (term))
+    return - total_cost/X.shape[0]
 # --------------------------------------------------------------------------
 # set up log reg class
 # --------------------------------------------------------------------------
 class my_logistic_reg:
-    def __init__(self, my_x, my_y, lr = 0.001, n_iter = 1000, dj_stop = 0.00001):
-        self.my_x = my_x
-        self.my_y = my_y
+    def __init__(self, lr = 0.001, n_iter = 5000, dj_stop = 0.00001):
+        self.slopes = None
+        self.y_intercepts = None
         self.lr = lr
         self.n_iter = n_iter
         self.dj_stop = dj_stop
 
-    def log_model(self):
-        n_samples, n_features = self.my_x.shape
-
+    def fit_model(self, my_x, my_y):
+        n_samples, n_features = my_x.shape
         # init parameters
-        self.slope = np.zeros(n_features)
+        self.slopes = np.zeros(n_features)
         self.y_intercept = 0
+        prev_cost = 1
         #stop the grad descent ∆J = 0.00001
         dj = 1
+        di = 1
         gd_iter = 0
+        
+        print(f'{self.dj_stop} and {self.dj_stop} {gd_iter} {self.n_iter}')
 
         # gradient descent
-        while dj >= self.dj_stop or gd_iter >= self.n_iter:
+        while_criteria = [dj >= self.dj_stop, di >= self.dj_stop, gd_iter <= self.n_iter]
+        while any(while_criteria):
             # approximate y with linear combination of slope and x, plus y_intercept
-            linear_model = np.dot(self.my_x, self.slope) + self.y_intercept
+            linear_model = np.dot(my_x, self.slopes) + self.y_intercept
             # apply sigmoid function
             y_predicted = sigmoid(linear_model)
 
             # compute gradients
-            d_slope = (1 / n_samples) * np.dot(self.my_x.T, (y_predicted - self.my_y))
-            d_intercept = (1 / n_samples) * np.sum(y_predicted - self.my_y)
+            d_slope = (1 / n_samples) * np.dot(my_x.T, (y_predicted - my_y))
+            d_intercept = (1 / n_samples) * np.sum(y_predicted - my_y)
+            
             # update parameters
-            self.slope -= self.lr * d_slope
+            self.slopes -= self.lr * d_slope
+#            print(self.slopes)
             self.y_intercept -= self.lr * d_intercept
             gd_iter+=1
-            dj = d_slope
-        print('done with while')
+            di = d_intercept
+            print(d_slope)
+#        print(f'done with while iters:{gd_iter}')
         print(dj)
         # print(self.slope)
         # print(self.y_intercept = 0)
@@ -117,14 +118,13 @@ print(f'test_x.shape: {test_x.shape}')
 test_y = df_y.drop(filter(lambda a: a != test_index, range(df.shape[0])), axis = 0)
 print(f'test_y.shape: {test_y.shape}')
 
-
-
 # --------------------------------------------------------------------------
 # main method
 # --------------------------------------------------------------------------
 
-#my_lr = my_logistic_reg(train_x, train_y)
-#my_lr.log_model()
+my_lr = my_logistic_reg()
+my_lr.fit_model(train_x, train_y)
+
  
 
 
@@ -138,13 +138,6 @@ print(f'sklearn log rediction: {skl_pred}')
 print(f'Correct answer: {test_y}, {test_y == skl_pred}')
 print(skl_log.coef_)
 print(skl_log.intercept_)
-
-def cost_j(X,y, coef, intercept):
-    total_cost = 0
-    for row in range(X.shape[0]):
-        term = np.log(sigmoid(-(np.dot( skl_log.coef_[0].T, np.array(X.iloc[row,])))))
-        total_cost += y.iloc[row,] * term + (1-y.iloc[row,] * (term))
-    return - total_cost/X.shape[0]
         
 my_row = np.array(train_x.iloc[1,])
 
