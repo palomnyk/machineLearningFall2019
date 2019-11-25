@@ -31,19 +31,20 @@ def logit(p):
 def sigmoid(line):
     return 1/(1 + np.exp(-line))
 
-def cost_j(X,y, coef, intercept):
+def loss_j(X,y, coef, intercept):
     total_cost = 0
     for row in range(X.shape[0]):
-        term = np.log(sigmoid(-(np.dot( skl_log.coef_[0].T, np.array(X.iloc[row,])))))
+#        print(f"coef.T: {coef.T}, np.array(X.iloc[row,]): {np.array(X.iloc[row,])}")
+        term = np.log(sigmoid((np.dot( coef.T, np.array(X.iloc[row,])))))
         total_cost += y.iloc[row,] * term + (1-y.iloc[row,] * (term))
     return - total_cost/X.shape[0]
 # --------------------------------------------------------------------------
 # set up log reg class
 # --------------------------------------------------------------------------
 class my_logistic_reg:
-    def __init__(self, lr = 0.001, n_iter = 5000, dj_stop = 0.00001):
+    def __init__(self, lr = 0.001, n_iter = 1000, dj_stop = 0.00001):
         self.slopes = None
-        self.y_intercepts = None
+        self.y_intercept = None
         self.lr = lr
         self.n_iter = n_iter
         self.dj_stop = dj_stop
@@ -53,39 +54,48 @@ class my_logistic_reg:
         # init parameters
         self.slopes = np.zeros(n_features)
         self.y_intercept = 0
-        prev_cost = 1
         #stop the grad descent ∆J = 0.00001
-        dj = 1
+        d_slope = np.ones(n_features)
         di = 1
-        gd_iter = 0
+        self.cost_j = []
         
-        print(f'{self.dj_stop} and {self.dj_stop} {gd_iter} {self.n_iter}')
+        print(f'{self.dj_stop} and {self.dj_stop} {len(self.cost_j)} {self.n_iter}')
 
         # gradient descent
-        while_criteria = [dj >= self.dj_stop, di >= self.dj_stop, gd_iter <= self.n_iter]
-        while any(while_criteria):
+        while all(d_slope >= self.dj_stop) and len(self.cost_j) <= self.n_iter:
             # approximate y with linear combination of slope and x, plus y_intercept
             linear_model = np.dot(my_x, self.slopes) + self.y_intercept
             # apply sigmoid function
             y_predicted = sigmoid(linear_model)
+            
+#            print(f"slopes: {self.slopes}, intercepts {self.y_intercept}")
+            print(list(zip(my_y, y_predicted)))
+            
+            self.cost_j.append(loss_j(my_x, my_y, self.slopes, self.y_intercept))
 
             # compute gradients
-            d_slope = (1 / n_samples) * np.dot(my_x.T, (y_predicted - my_y))
+            d_slope = (1 / n_samples) * np.dot(my_x.T, (y_predicted - my_y))#this is the paritial deriviative
             d_intercept = (1 / n_samples) * np.sum(y_predicted - my_y)
             
+#            print(d_slope)
+#            print(d_intercept)
             # update parameters
             self.slopes -= self.lr * d_slope
-#            print(self.slopes)
             self.y_intercept -= self.lr * d_intercept
-            gd_iter+=1
             di = d_intercept
-            print(d_slope)
-#        print(f'done with while iters:{gd_iter}')
-        print(dj)
-        # print(self.slope)
-        # print(self.y_intercept = 0)
+#           print(d_slope)
+#        print(f'done with while iters:{len(self.cost_j)}')
+            
         
-    def test(self):
+        print(self.slopes)
+        print(self.y_intercept)
+        print(len(self.cost_j))
+        print(self.cost_j)
+        
+    def test_model(self):
+        pass
+    
+    def plot_cost(self):
         pass
 # --------------------------------------------------------------------------
 # create training and testingdatasets
@@ -131,16 +141,17 @@ my_lr.fit_model(train_x, train_y)
 # --------------------------------------------------------------------------
 # run professional log reg model
 # --------------------------------------------------------------------------
-skl_log = linear_model.LogisticRegression(solver="lbfgs")
-skl_log.fit(X=train_x, y=train_y)
-skl_pred = skl_log.predict(test_x)
-print(f'sklearn log rediction: {skl_pred}')
-print(f'Correct answer: {test_y}, {test_y == skl_pred}')
-print(skl_log.coef_)
-print(skl_log.intercept_)
-        
-my_row = np.array(train_x.iloc[1,])
-
-skl_log_cost = cost_j(train_x, train_y, skl_log.coef_, skl_log.intercept_)
-print(f'2(c) the total final cost J: {skl_log_cost}')
+#print('pro_stuff')
+#skl_log = linear_model.LogisticRegression(solver="lbfgs")
+#skl_log.fit(X=train_x, y=train_y)
+#skl_pred = skl_log.predict(test_x)
+#print(f'sklearn log rediction: {skl_pred}')
+#print(f'Correct answer: {test_y}, {test_y == skl_pred}')
+#print(skl_log.coef_)
+#print(skl_log.intercept_)
+#        
+#my_row = np.array(train_x.iloc[1,])
+#
+#skl_log_cost = loss_j(train_x, train_y, skl_log.coef_, skl_log.intercept_)
+#print(f'2(c) the total final cost J: {skl_log_cost}')
    
