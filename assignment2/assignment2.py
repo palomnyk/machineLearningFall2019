@@ -23,6 +23,17 @@ from sklearn.datasets import load_iris
 from sklearn import preprocessing
 
 # --------------------------------------------------------------------------
+# set up plotting parameters
+# --------------------------------------------------------------------------
+line_width_1 = 2
+line_width_2 = 2
+marker_1 = '.' # point
+marker_2 = 'o' # circle
+marker_size = 12
+line_style_1 = ':' # dotted line
+line_style_2 = '-' # solid line
+
+# --------------------------------------------------------------------------
 # Some useful functions
 # --------------------------------------------------------------------------
 def logit(p):
@@ -101,10 +112,17 @@ class my_logistic_reg:
         pass
     
     def plot_cost(self):
-        pass
-    
-    def _grad_des(self):
-        pass
+        if len(self.cost_j) != 0:
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1)
+            ax.scatter( range(0, len(self.cost_j) ), self.cost_j, label=f'Cost function values', color='yellow', marker=marker_1, linewidth=line_width_1)
+#            ax.plot(self.x, self.y_hat, color='blue', label='model from training data', linewidth=line_width_1)
+            ax.set_xlabel('Iterations')
+            ax.set_ylabel('Cost values')
+#            ax.set_title("Linear regression of diabetes data with d_lm class")
+#            ax.legend(loc='lower right', fontsize=9)
+            fig.show()
+
 # --------------------------------------------------------------------------
 # create training and testingdatasets
 # --------------------------------------------------------------------------
@@ -147,7 +165,7 @@ print(f'test_y.shape: {test_y.shape}')
 
 my_lr = my_logistic_reg()
 my_lr.fit_model(train_x, train_y)
-
+my_lr.plot_cost()
 
 # --------------------------------------------------------------------------
 # run professional log reg model
