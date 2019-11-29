@@ -58,8 +58,8 @@ class my_logistic_reg:
         self.slopes = np.zeros(n_features)
         self.y_intercept = 1
         #stop the grad descent ∆J = 0.00001
-        d_slope = np.ones(n_features)
-        di = 1
+#        d_slope = np.ones(n_features)
+#        di = 1
         self.cost_j = []
         
         print(f'{self.dj_stop} and {self.dj_stop} {len(self.cost_j)} {self.n_iter}')
@@ -67,33 +67,35 @@ class my_logistic_reg:
         # gradient descent   
         while len(self.cost_j) < self.n_iter:#this is basically a for-loop that will go n iterations
             # approximate y with linear combination of slope and x, plus y_intercept
-            linear_model = np.dot(my_x, self.slopes) + self.y_intercept
+            lin_model = np.dot(my_x, self.slopes) + self.y_intercept
             # apply sigmoid function
-            y_predicted = sigmoid(linear_model)
+            y_predicted = sigmoid(lin_model)
             loss = loss_j(my_y, y_predicted)          
-            self.cost_j.append(loss)
             # compute gradients
             dz = y_predicted -my_y
             d_slope = (1 / n_samples) * np.matmul(my_x.T, dz)
             d_intercept = np.sum(dz)
             
             # update parameters
+            print(f"slopes1: {self.slopes}")
             self.slopes -= self.lr * d_slope
+            print(f"slopes2: {self.slopes}")
             self.y_intercept -= self.lr * d_intercept
-            print(f"in iters {len(self.cost_j)}, dif in j: {self.cost_j[-1]}")
+            print(f"in iters {len(self.cost_j)}")
             if len(self.cost_j) == 0:
                 self.cost_j.append(loss)
-                print("in if")
+                print("in iffffffffffffffffffffffffffffffffff")
             else:
                 self.cost_j.append(loss)
-                if loss - self.cost_j[-1] <= self.dj_stop:
+                print(f"difffffffff: {loss - self.cost_j[-2]}")
+                if abs(loss - self.cost_j[-2]) < self.dj_stop:
                     print(f'done with while iters:{len(self.cost_j)}')
 #                    print(self.slopes)
 #                    print(self.y_intercept)
 #                    print(len(self.cost_j))
 #                    print(self.cost_j)
                     break#get out of while loop
-                
+        print(self.cost_j)
                 
     def test_model(self):
         pass
@@ -150,14 +152,14 @@ my_lr.fit_model(train_x, train_y)
 # --------------------------------------------------------------------------
 # run professional log reg model
 # --------------------------------------------------------------------------
-print('pro_stuff')
-skl_log = linear_model.LogisticRegression(solver="lbfgs")
-skl_log.fit(X=train_x, y=train_y)
-skl_pred = skl_log.predict(test_x)
-print(f'sklearn log rediction: {skl_pred}')
-print(f'Correct answer: {test_y}, {test_y == skl_pred}')
-print(skl_log.coef_)
-print(skl_log.intercept_)
+#print('pro_stuff')
+#skl_log = linear_model.LogisticRegression(solver="lbfgs")
+#skl_log.fit(X=train_x, y=train_y)
+#skl_pred = skl_log.predict(test_x)
+#print(f'sklearn log rediction: {skl_pred}')
+#print(f'Correct answer: {test_y}, {test_y == skl_pred}')
+#print(skl_log.coef_)
+#print(skl_log.intercept_)
 #skl_log_cost = loss_j(train_x, train_y, skl_log.coef_)
 #print(f'2(c) the total final cost J: {skl_log_cost}')
    
