@@ -18,7 +18,6 @@ from itertools import chain
 # for comparison
 import scipy.stats as stats
 from sklearn import linear_model
-from sklearn import datasets
 # for dataset
 from sklearn.datasets import load_iris
 from sklearn import preprocessing
@@ -39,14 +38,14 @@ def loss_j(X,y, coef):
 #        term = np.log(sigmoid((np.dot( coef.T, np.array(X.iloc[row,])))))
 #        total_cost += y.iloc[row,] * term + (1-y.iloc[row,] * (term))
 #    return - total_cost/X.shape[0]
-    return 1/len(y) * (y @ np.log(sigmoid(X@coef)) - (1-y) @ np.log(1-sigmoid(X@coef)) )
+    return 1/len(y) * np.sum((y @ np.log(sigmoid(X@coef)) - (1-y) @ np.log(1-sigmoid(X@coef)) ))
 
 
 # --------------------------------------------------------------------------
 # set up log reg class
 # --------------------------------------------------------------------------
 class my_logistic_reg:
-    def __init__(self, lr = 0.001, n_iter = 1000, dj_stop = 0.0000000001):
+    def __init__(self, lr = 0.001, n_iter = 1000, dj_stop = 0.0001):
         self.slopes = None
         self.y_intercept = None
         self.lr = lr
@@ -84,15 +83,16 @@ class my_logistic_reg:
             if len(self.cost_j) == 0:
                 self.cost_j.append(loss)
                 print("in if")
-            elif loss - self.cost_j[-1] <= self.dj_stop:
+            else:
                 self.cost_j.append(loss)
-                print(f'done with while iters:{len(self.cost_j)}')
-                print(self.slopes)
-                print(self.y_intercept)
-                print(len(self.cost_j))
-                print(self.cost_j)
-                break#get out of while loop
-
+                if loss - self.cost_j[-1] <= self.dj_stop:
+                    print(f'done with while iters:{len(self.cost_j)}')
+                    print(self.slopes)
+                    print(self.y_intercept)
+                    print(len(self.cost_j))
+                    print(self.cost_j)
+                    break#get out of while loop
+                
                 
     def test_model(self):
         pass
@@ -144,8 +144,6 @@ print(f'test_y.shape: {test_y.shape}')
 
 my_lr = my_logistic_reg()
 my_lr.fit_model(train_x, train_y)
-
- 
 
 
 # --------------------------------------------------------------------------
