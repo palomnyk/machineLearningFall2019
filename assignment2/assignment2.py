@@ -31,15 +31,15 @@ def logit(p):
 def sigmoid(line):
     return 1/(1 + np.exp(-line))
 
-def loss_j(X,y, coef):
+def loss_j(y,y_hat):
 #    total_cost = 0
 #    for row in range(X.shape[0]):
 ##        print(f"coef.T: {coef.T}, np.array(X.iloc[row,]): {np.array(X.iloc[row,])}")
 #        term = np.log(sigmoid((np.dot( coef.T, np.array(X.iloc[row,])))))
 #        total_cost += y.iloc[row,] * term + (1-y.iloc[row,] * (term))
 #    return - total_cost/X.shape[0]
-    return 1/len(y) * np.sum((y @ np.log(sigmoid(X@coef)) - (1-y) @ np.log(1-sigmoid(X@coef)) ))
-
+#    return 1/len(y) * np.sum((y @ np.log(sigmoid(X@coef)) - (1-y) @ np.log(1-sigmoid(X@coef)) ))
+    return -np.mean(y*np.log(y_hat) + (1-y) * np.log(1-y_hat))
 
 # --------------------------------------------------------------------------
 # set up log reg class
@@ -56,7 +56,7 @@ class my_logistic_reg:
         n_samples, n_features = my_x.shape
         # init parameters
         self.slopes = np.zeros(n_features)
-        self.y_intercept = 0
+        self.y_intercept = 1
         #stop the grad descent ∆J = 0.00001
         d_slope = np.ones(n_features)
         di = 1
@@ -70,16 +70,17 @@ class my_logistic_reg:
             linear_model = np.dot(my_x, self.slopes) + self.y_intercept
             # apply sigmoid function
             y_predicted = sigmoid(linear_model)
-            loss = loss_j(my_x, my_y, self.slopes)
-#            print(f"slopes: {self.slopes}, intercepts {self.y_intercept}")            
+            loss = loss_j(my_y, y_predicted)          
             self.cost_j.append(loss)
             # compute gradients
-            d_slope = (1 / n_samples) * np.sum( np.dot(my_x.T, (y_predicted - my_y)))#this is the paritial deriviative
-            d_intercept = (1 / n_samples) * np.sum(y_predicted - my_y)
+            dz = y_predicted -my_y
+            d_slope = (1 / n_samples) * np.matmul(my_x.T, dz)
+            d_intercept = np.sum(dz)
+            
             # update parameters
             self.slopes -= self.lr * d_slope
             self.y_intercept -= self.lr * d_intercept
-            print(f"in iters {self.cost_j}")
+            print(f"in iters {len(self.cost_j)}, dif in j: {self.cost_j[-1]}")
             if len(self.cost_j) == 0:
                 self.cost_j.append(loss)
                 print("in if")
@@ -87,10 +88,10 @@ class my_logistic_reg:
                 self.cost_j.append(loss)
                 if loss - self.cost_j[-1] <= self.dj_stop:
                     print(f'done with while iters:{len(self.cost_j)}')
-                    print(self.slopes)
-                    print(self.y_intercept)
-                    print(len(self.cost_j))
-                    print(self.cost_j)
+#                    print(self.slopes)
+#                    print(self.y_intercept)
+#                    print(len(self.cost_j))
+#                    print(self.cost_j)
                     break#get out of while loop
                 
                 
