@@ -48,7 +48,7 @@ def loss_j(X,y, coef):
 # set up log reg class
 # --------------------------------------------------------------------------
 class my_logistic_reg:
-    def __init__(self, lr = 0.1, n_iter = 1000, dj_stop = 0.00001):
+    def __init__(self, lr = .1, n_iter = 10000, dj_stop = 0.00001):
         self.slopes = None
         self.y_intercept = None
         self.lr = lr
@@ -72,7 +72,9 @@ class my_logistic_reg:
             loss = loss_j(my_x, my_y, self.slopes)          
             # compute gradients
             dz = y_predicted -my_y
-            d_slope = (1 / n_samples) * np.matmul(my_x.T, dz)
+#            gradient = np.dot(X.T, (h - y)) / y.shape[0]
+            d_slope = np.dot(my_x.T, (y_predicted - my_y)) / n_samples
+#            d_slope = (1 / n_samples) * np.sum(np.matmul(my_x.T, dz))
             d_intercept = np.sum(dz)
             
             # update parameters
