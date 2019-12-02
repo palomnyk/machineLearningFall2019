@@ -3,13 +3,18 @@
 """
 Created on Sun Dec  1 17:59:32 2019
 
-@author: aaronyerke
+@authors: Aaron Yerke, Brandon Turner, Brendan Kearney, and Rosh Chan
 
-Machine Learning with Dr. Du, Dec 2019
-
-Homework3:
-
-Create a neural net...
+BINF 6210 / BINF 8210:  Machine Learning
+Final ProjectDue, Tuesday, December 10, 20191.  
+(50  points)  Implement  your  own  neural  network  having  two  hidden  layers  inPython.2.  
+(30 points) Apply your neural network to the Wisconsin Diagnostic Breast Cancer(WDBC) data for classifying the cancer.  
+Perform leave-one-out cross validation.The data can be downloaded from the UCI (UC Irvine) Machine Learning Repos-itory.  
+The webpage that describes this breast cancer data repository can be ac-cessed by clicking on this link:
+    Breast Cancer Wisconsin (Diagnostic) Data Set
+and then clickData Folderat the top of the page to go to the download site.
+Or you can click the following link directly to go to the download site:DownloadThe data is in file
+wdbc.dataand description of the data is in filewdbc.names.
 """
 
 # --------------------------------------------------------------------------
