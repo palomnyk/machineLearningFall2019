@@ -14,6 +14,7 @@ import os, sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from itertools import chain
 # for comparison
 import scipy.stats as stats
 from sklearn import linear_model
@@ -41,26 +42,31 @@ def logit(p):
 def sigmoid(line):
     return 1/(1 + np.exp(-line))
 
-def loss_j(X,y, coef):
+def loss_j1(X,y, coef):
     return 1/len(y) * np.sum((y @ np.log(sigmoid(X@coef)) - (1-y) @ np.log(1-sigmoid(X@coef)) ))
+
+def loss_j(y, y_hat):
+    return -np.mean(y*np.log(y_hat) + (1-y) * np.log(1-y_hat))
 
 # --------------------------------------------------------------------------
 # set up log reg class
 # --------------------------------------------------------------------------
 class my_logistic_reg:
-    def __init__(self, lr = .1, n_iter = 10000, dj_stop = 0.00001):
+    def __init__(self, lr = 0.001, n_iter = 1000, dj_stop = 0.0001):
         self.slopes = None
         self.y_intercept = None
         self.lr = lr
         self.n_iter = n_iter
         self.dj_stop = dj_stop
+        
+    def _loss_j(self, y, y_hat):
+        return -np.mean(y*np.log(y_hat) + (1-y) * np.log(1-y_hat))
 
     def fit_model(self, my_x, my_y):
         n_samples, n_features = my_x.shape
         # init parameters
         self.slopes = np.zeros(n_features)
         self.y_intercept = 1
-        #stop the grad descent ∆J = 0.00001
         self.cost_j = []
 
         # gradient descent   
@@ -69,12 +75,10 @@ class my_logistic_reg:
             lin_model = np.dot(my_x, self.slopes) + self.y_intercept
             # apply sigmoid function
             y_predicted = sigmoid(lin_model)
-            loss = loss_j(my_x, my_y, self.slopes)          
+            loss = self._loss_j(my_y, y_predicted)          
             # compute gradients
             dz = y_predicted -my_y
-#            gradient = np.dot(X.T, (h - y)) / y.shape[0]
-            d_slope = np.dot(my_x.T, (y_predicted - my_y)) / n_samples
-#            d_slope = (1 / n_samples) * np.sum(np.matmul(my_x.T, dz))
+            d_slope = (1 / n_samples) * np.matmul(my_x.T, dz)
             d_intercept = np.sum(dz)
             
             # update parameters
@@ -105,7 +109,7 @@ class my_logistic_reg:
         if len(self.cost_j) != 0:
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1)
-            ax.scatter( range(0, len(self.cost_j) ), self.cost_j, label=f'Cost function values', color='black', marker=marker_1, linewidth=line_width_1)
+            ax.scatter( range(0, len(self.cost_j) ), self.cost_j, label=f'Cost function values', color='yellow', marker=marker_1, linewidth=line_width_1)
 #            ax.plot(self.x, self.y_hat, color='blue', label='model from training data', linewidth=line_width_1)
             ax.set_xlabel('Iterations')
             ax.set_ylabel('Cost values')
@@ -169,6 +173,10 @@ print(f'sklearn log rediction: {skl_pred}')
 print(f'Correct answer: {test_y}, {test_y == skl_pred}')
 print(skl_log.coef_)
 print(skl_log.intercept_)
-skl_log_cost = loss_j(train_x, train_y, skl_log.coef_.T)
+#lin_model = np.matmul(np.transpose(np.matrix(train_x)), np.array(skl_log.coef_)) + skl_log.intercept_
+# apply sigmoid function
+#y_predicted = sigmoid(lin_model)
+#print(f"typeeeeeeeeeeeeees {type(train_y)}, {type(y_predicted)}")
+#loss = loss_j(train_y, y_predicted)
+skl_log_cost = loss_j1(train_x, train_y, skl_log.coef_.T)
 print(f'2(c) the total final cost J: {skl_log_cost}')
-
