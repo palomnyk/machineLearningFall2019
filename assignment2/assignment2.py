@@ -1,7 +1,10 @@
 # Aaron Yerke, HW 2 for ML 2019
 # 1. (50 points) Implement gradient descent-based logistic regression in Python. Use
 # ∆J = 0.00001 as the stopping criterion.
-# 2. (50 points total distributed as below) Apply your code from question 2 to the iris virginica and virsicolor flowers. Specifically, randomly select 99 of these flowers for training your logistic model and use the remaining one flower for testing. You only need to do training once and testing once with your specific choice of the training flowers and testing flowers. That is to say, you don’t need to do the leave-one-out cross validation 100 times.
+# 2. (50 points total distributed as below) Apply your code from question 2 to the iris virginica and virsicolor flowers.
+# Specifically, randomly select 99 of these flowers for training your logistic model and use the remaining one flower for testing. 
+# You only need to do training once and testing once with your specific choice of the training flowers and testing flowers. 
+# That is to say, you don’t need to do the leave-one-out cross validation 100 times.
 # (a) (15 points) After your training, plot the total cost J vs iterations for your 99 training flowers for four scenarios.
 # (b) (20 points) Predict the flower type of your testing flower for each of the four scenarios.
 # (c) (15 points) Apply sklearn.linear model.LogisticRegression to your specific choice of training flowers. With the intercept and coefficients produced by sklearn, calculate the total final cost J for your 99 flowers.
@@ -18,6 +21,7 @@ from itertools import chain
 # for comparison
 import scipy.stats as stats
 from sklearn import linear_model
+from sklearn.metrics import f1_score
 # for dataset
 from sklearn.datasets import load_iris
 from sklearn import preprocessing
@@ -52,7 +56,7 @@ def loss_j(y, y_hat):
 # set up log reg class
 # --------------------------------------------------------------------------
 class my_logistic_reg:
-    def __init__(self, lr = 0.001, n_iter = 1000, dj_stop = 0.0001):
+    def __init__(self, lr = 0.001, n_iter = 1000, dj_stop = 0.00001):
         self.slopes = None
         self.y_intercept = None
         self.lr = lr
@@ -104,12 +108,11 @@ class my_logistic_reg:
             print(f"The model prediction: {model_prediction}\nThe correct value: {y_val}")
         return model_prediction
         
-        
     def plot_cost(self):
         if len(self.cost_j) != 0:
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1)
-            ax.scatter( range(0, len(self.cost_j) ), self.cost_j, label=f'Cost function values', color='yellow', marker=marker_1, linewidth=line_width_1)
+            ax.scatter( range(0, len(self.cost_j) ), self.cost_j, label=f'Cost function values', color='red', marker=marker_1, linewidth=line_width_1)
 #            ax.plot(self.x, self.y_hat, color='blue', label='model from training data', linewidth=line_width_1)
             ax.set_xlabel('Iterations')
             ax.set_ylabel('Cost values')
@@ -118,7 +121,7 @@ class my_logistic_reg:
             fig.show()
 
 # --------------------------------------------------------------------------
-# create training and testingdatasets
+# create training and testing datasets
 # --------------------------------------------------------------------------
 iris = load_iris()
 df = pd.DataFrame(iris.data, columns = iris['feature_names'])
@@ -154,7 +157,7 @@ test_y = df_y.drop(filter(lambda a: a != test_index, range(df.shape[0])), axis =
 print(f'test_y.shape: {test_y.shape}')
 
 # --------------------------------------------------------------------------
-# main method
+# Fit and test homemade model
 # --------------------------------------------------------------------------
 
 my_lr = my_logistic_reg()
@@ -163,20 +166,35 @@ my_lr.plot_cost()
 my_lr.test_model(test_x, test_y.iloc[0])
 
 # --------------------------------------------------------------------------
+# Test homemade model with f1_score
+# --------------------------------------------------------------------------
+preds = []
+for i in train_x.T.iteritems():
+    preds.append(my_lr.test_model(np.matrix(i[1])))
+print("accuracy by homemade model")
+print(f1_score(preds,train_y))
+f1_score(preds,train_y)
+
+
+# --------------------------------------------------------------------------
 # run professional log reg model
 # --------------------------------------------------------------------------
 print('pro_stuff')
 skl_log = linear_model.LogisticRegression(solver="lbfgs")
 skl_log.fit(X=train_x, y=train_y)
 skl_pred = skl_log.predict(test_x)
-print(f'sklearn log rediction: {skl_pred}')
+print(f'sklearn log prediction: {skl_pred}')
 print(f'Correct answer: {test_y}, {test_y == skl_pred}')
 print(skl_log.coef_)
 print(skl_log.intercept_)
-#lin_model = np.matmul(np.transpose(np.matrix(train_x)), np.array(skl_log.coef_)) + skl_log.intercept_
-# apply sigmoid function
-#y_predicted = sigmoid(lin_model)
-#print(f"typeeeeeeeeeeeeees {type(train_y)}, {type(y_predicted)}")
-#loss = loss_j(train_y, y_predicted)
+
+preds = []
+for i in train_x.T.iteritems():
+    preds.append(skl_log.predict(np.matrix(i[1])))
+print("accuracy by sklearn model")
+print(f1_score(preds,train_y))
+f1_score(preds,train_y)
+
+
 skl_log_cost = loss_j1(train_x, train_y, skl_log.coef_.T)
 print(f'2(c) the total final cost J: {skl_log_cost}')
