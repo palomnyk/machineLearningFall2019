@@ -63,7 +63,7 @@ else:
     sigma = 1.0
 
     epsilon = sigma * np.random.normal(loc=0.0, scale=1, size=n)
-
+ 
     y_theoretical = beta_0 + beta_1 * x
     y = beta_0 + beta_1 * x + epsilon
 

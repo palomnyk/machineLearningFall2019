@@ -6,7 +6,7 @@ from matplotlib.colors import ListedColormap
 from sklearn.neighbors import NearestNeighbors
 from sklearn import neighbors, datasets
 
-n_neighbors = 4
+n_neighbors = 4 
 
 def main():
 
